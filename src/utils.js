@@ -1,5 +1,9 @@
 import { unlink } from "fs/promises";
 
+export const INITIAL_SESSION = {
+  messages: [],
+};
+
 export async function removeFile(path) {
   try {
     await unlink(path);
