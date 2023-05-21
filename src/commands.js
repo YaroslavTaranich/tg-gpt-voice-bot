@@ -5,6 +5,7 @@ import { openAI } from "./openAI.js";
 
 export const start = async (ctx) => {
   ctx.session = INITIAL_SESSION;
+  ctx.session.mode = MODE.CHAT;
   await ctx.reply(
     code("Запиши голосовуху или отправь сообщение для общения с ГПТ!"),
     Markup.inlineKeyboard([
@@ -19,6 +20,7 @@ export const start = async (ctx) => {
 
 export const newSession = async (ctx) => {
   ctx.session = INITIAL_SESSION;
+  ctx.session.mode = MODE.CHAT;
   await ctx.reply(
     code(
       "Начал новую сессию! Запиши голосовуху или отправь сообщение для общения с ГПТ!"
@@ -36,6 +38,7 @@ export const voice = async (ctx) => {
 
 export const gopnic = async (ctx) => {
   ctx.session = INITIAL_SESSION;
+  ctx.session.mode = MODE.CHAT;
   ctx.session.messages.push({
     role: openAI.roles.SYSTEM,
     content: "Отвечай как типичный гопник",
@@ -45,6 +48,7 @@ export const gopnic = async (ctx) => {
 
 export const snob = async (ctx) => {
   ctx.session = INITIAL_SESSION;
+  ctx.session.mode = MODE.CHAT;
   ctx.session.messages.push({
     role: openAI.roles.SYSTEM,
     content: "Отвечай как самый настоящий сноб",
@@ -54,6 +58,7 @@ export const snob = async (ctx) => {
 
 export const professor = async (ctx) => {
   ctx.session = INITIAL_SESSION;
+  ctx.session.mode = MODE.CHAT;
   ctx.session.messages.push({
     role: openAI.roles.SYSTEM,
     content: "Отвечай как очень старый и очень умный профессор математики",

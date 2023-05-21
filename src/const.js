@@ -1,7 +1,7 @@
 export const COMANDS = {
   START: "start",
   NEW: "new",
-  GOPNIC: "gopnic",
+  GOPNIC: "gopnik",
   SNOB: "snob",
   PROFESSOR: "professor",
   VOICE: "voice",
