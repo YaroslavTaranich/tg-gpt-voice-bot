@@ -7,6 +7,10 @@ export const COMANDS = {
   PROFESSOR: "professor",
   VOICE: "voice",
   CREATE_IMAGE: "create_image",
+
+  IMAGE_COMMANDS: "image_commands",
+  VARIATON: "variaton_image",
+  EDIT_IMAGE: "edit_image",
 };
 
 export const MODE = {
@@ -15,7 +19,14 @@ export const MODE = {
   CREATE_IMAGE: "create_image",
 };
 
+export const IMAGE_MODE = {
+  VARIATON: "variation",
+  EDIT_BY_PROMPT: "edit by prompt",
+};
+
 export const INITIAL_SESSION = {
   messages: [],
   mode: MODE.CHAT,
+  image_mode: IMAGE_MODE.VARIATON,
+  pngPath: null,
 };

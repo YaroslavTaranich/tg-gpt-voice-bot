@@ -1,5 +1,5 @@
 import { Markup } from "telegraf";
-import { INITIAL_SESSION, COMANDS, MODE } from "./const.js";
+import { INITIAL_SESSION, COMANDS, MODE, IMAGE_MODE } from "./const.js";
 import { code } from "telegraf/format";
 import { openAI } from "./openAI.js";
 
@@ -7,9 +7,20 @@ const commandButtons = Markup.inlineKeyboard([
   [Markup.button.callback("Новая сессия", COMANDS.NEW)],
   [Markup.button.callback("Голос в текст", COMANDS.VOICE)],
   [Markup.button.callback("Создать картинку", COMANDS.CREATE_IMAGE)],
+  [Markup.button.callback("Режим работы с картинками", COMANDS.IMAGE_COMMANDS)],
   [Markup.button.callback("Отвечать как гопник", COMANDS.GOPNIC)],
   [Markup.button.callback("Отвечать как сноб", COMANDS.SNOB)],
   [Markup.button.callback("Отвечать как профессор", COMANDS.PROFESSOR)],
+]);
+
+const imageCommandButtons = Markup.inlineKeyboard([
+  [Markup.button.callback("Создавать вариации изображения", COMANDS.VARIATON)],
+  [
+    Markup.button.callback(
+      "Изменять изображение по описанию",
+      COMANDS.EDIT_IMAGE
+    ),
+  ],
 ]);
 
 export const start = async (ctx) => {
@@ -23,8 +34,19 @@ export const start = async (ctx) => {
 
 export const commands = async (ctx) => {
   await ctx.reply(
-    code("Запиши голосовуху или отправь сообщение для общения с ГПТ!"),
+    code(
+      "Запиши голосовуху, отправь сообщение или картинку для общения с ГПТ!"
+    ),
     commandButtons
+  );
+};
+
+export const imageCommands = async (ctx) => {
+  await ctx.reply(
+    code(
+      "Запиши голосовуху, отправь сообщение или картинку для общения с ГПТ!"
+    ),
+    imageCommandButtons
   );
 };
 
@@ -82,4 +104,16 @@ export const professor = async (ctx) => {
     content: "Отвечай как очень старый и очень умный профессор математики",
   });
   await ctx.reply(code("Теперь я буду отвечать как профессор!"));
+};
+
+export const variation = async (ctx) => {
+  ctx.session = INITIAL_SESSION;
+  ctx.session.image_mode = IMAGE_MODE.VARIATON;
+  await ctx.reply(code("Теперь я буду присылать вариации изображения!"));
+};
+
+export const editImageByPrompt = async (ctx) => {
+  ctx.session = INITIAL_SESSION;
+  ctx.session.image_mode = IMAGE_MODE.EDIT_BY_PROMPT;
+  await ctx.reply(code("Теперь я буду изменять изображение по описанию!"));
 };

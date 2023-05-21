@@ -36,9 +36,36 @@ class OpenAI {
         n: 1,
         size: "1024x1024",
       });
-      return await response.data.data[0].url;
+      return response.data.data[0].url;
     } catch (error) {
       console.log("Error while creating image with openAI: " + error.message);
+    }
+  }
+
+  async editImage(pngPath, prompt) {
+    try {
+      // @todo fix if
+      const response = await this.openai.createImageEdit(
+        createReadStream(pngPath),
+        prompt
+      );
+      return response.data.data[0].url;
+    } catch (error) {
+      console.log("Error while creating image with openAI: " + error.message);
+      throw error;
+    }
+  }
+
+  async createImageVariation(pngPath) {
+    try {
+      const response = await this.openai.createImageVariation(
+        createReadStream(pngPath),
+        1,
+        "1024x1024"
+      );
+      return response.data.data[0].url;
+    } catch (error) {
+      console.log("Error while editing image with openAI: " + error.message);
     }
   }
 
