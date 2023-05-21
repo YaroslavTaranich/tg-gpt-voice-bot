@@ -29,6 +29,19 @@ class OpenAI {
     }
   }
 
+  async createImage(prompt) {
+    try {
+      const response = await this.openai.createImage({
+        prompt,
+        n: 1,
+        size: "1024x1024",
+      });
+      return await response.data.data[0].url;
+    } catch (error) {
+      console.log("Error while creating image with openAI: " + error.message);
+    }
+  }
+
   async chat(messages) {
     try {
       const completion = await this.openai.createChatCompletion({

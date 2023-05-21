@@ -7,36 +7,56 @@ import { removeFile } from "./utils.js";
 
 export const onText = async (ctx) => {
   ctx.session ??= INITIAL_SESSION;
-  if (ctx.session.mode === MODE.VOICE_TO_TEXT) {
-    await ctx.reply(
-      code(
-        "Включен режим перевода голосовух в текст, запиши голосовое сообщение или начни новую сессию чата"
-      ),
-      Markup.inlineKeyboard([Markup.button.callback("Новая сессия", `new`)])
-    );
-  } else {
-    const text = ctx.message.text;
-    try {
-      await ctx.reply(code("Оки-доки, ждём ответа от ГПТ!"));
+  const text = ctx.message.text;
 
-      ctx.session.messages.push({ role: openAI.roles.USER, content: text });
+  switch (ctx.session.mode) {
+    case MODE.VOICE_TO_TEXT:
+      await ctx.reply(
+        code(
+          "Включен режим перевода голосовух в текст, запиши голосовое сообщение или начни новую сессию чата"
+        ),
+        Markup.inlineKeyboard([Markup.button.callback("Новая сессия", `new`)])
+      );
+      break;
+    case MODE.CHAT:
+      try {
+        await ctx.reply(code("Оки-доки, ждём ответа от ГПТ!"));
 
-      const response = await openAI.chat(ctx.session.messages);
+        ctx.session.messages.push({ role: openAI.roles.USER, content: text });
 
-      ctx.session.messages.push({
-        role: openAI.roles.ASSISTANT,
-        content: response.content,
-      });
+        const response = await openAI.chat(ctx.session.messages);
 
-      ctx.reply(response.content);
-    } catch (error) {
-      if (error.response && error.response.status === 429) {
-        ctx.reply(
-          "УПС! Ошибка при использовании ГПТ. Превышено количество запросов. Сорян"
-        );
+        ctx.session.messages.push({
+          role: openAI.roles.ASSISTANT,
+          content: response.content,
+        });
+
+        ctx.reply(response.content);
+      } catch (error) {
+        if (error.response && error.response.status === 429) {
+          ctx.reply(
+            "УПС! Ошибка при использовании ГПТ. Превышено количество запросов. Сорян"
+          );
+        }
+        console.error("Error while text message", error.message);
       }
-      console.error("Error while vioce message", error.message);
-    }
+      break;
+    case MODE.CREATE_IMAGE:
+      try {
+        await ctx.reply(code("Оки-доки, создаём картинку с помощью ГПТ!"));
+
+        const response = await openAI.createImage(text);
+
+        ctx.replyWithPhoto(response);
+      } catch (error) {
+        if (error.response && error.response.status === 429) {
+          ctx.reply(
+            "УПС! Ошибка при использовании ГПТ. Превышено количество запросов. Сорян"
+          );
+        }
+        console.error("Error while prompt message", error.message);
+      }
+      break;
   }
 };
 
@@ -56,12 +76,18 @@ export const onVoice = async (ctx) => {
     const text = await openAI.transcription(mp3Path);
     removeFile(mp3Path);
     console.log("File converted to text: " + text);
-    await ctx.reply(
-      code(
-        ctx.session.mode === MODE.CHAT ? "Ты спросил: " : "Pacшифровка: ",
-        text
-      )
-    );
+
+    switch (ctx.session.mode) {
+      case MODE.CHAT:
+        await ctx.reply("Ты спросил: " + text);
+        break;
+      case MODE.VOICE_TO_TEXT:
+        await ctx.reply("Pacшифровка: " + text);
+        break;
+      case MODE.CREATE_IMAGE:
+        await ctx.reply("Картинка по запросу: " + text);
+        break;
+    }
 
     if (ctx.session.mode === MODE.CHAT) {
       ctx.session.messages.push({ role: openAI.roles.USER, content: text });
@@ -73,6 +99,12 @@ export const onVoice = async (ctx) => {
       });
 
       ctx.reply(response.content);
+    }
+
+    if (ctx.session.mode === MODE.CREATE_IMAGE) {
+      const response = await openAI.createImage(text);
+
+      ctx.replyWithPhoto(response);
     }
   } catch (error) {
     if (error.response && error.response.status === 429) {
