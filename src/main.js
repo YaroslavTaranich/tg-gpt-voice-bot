@@ -1,6 +1,8 @@
 import config from "config";
 import { Telegraf, session, Markup } from "telegraf";
+import { telegrafThrottler } from "telegraf-throttler";
 import { message } from "telegraf/filters";
+import { code } from "telegraf/format";
 import {
   commands,
   createImage,
@@ -20,7 +22,23 @@ import { openAI } from "./openAI.js";
 
 const bot = new Telegraf(config.get("TELEGRAM_API_KEY"));
 
+const throttleConfig = {
+  in: {
+    highWater: 1,
+    maxConcurrent: 1,
+    minTime: 7000,
+    reservoirRefreshAmount: 1,
+  },
+  inThrottlerError: (ctx) =>
+    ctx.reply(
+      code(
+        "Куда гонишь, брат? Слишком много запросов от тебя! Давай-ка помедленнее!"
+      )
+    ),
+};
+
 bot.use(session());
+bot.use(telegrafThrottler(throttleConfig));
 
 bot.command(COMANDS.START, start);
 bot.command(COMANDS.COMMANDS, commands);
