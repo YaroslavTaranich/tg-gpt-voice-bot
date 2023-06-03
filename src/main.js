@@ -26,8 +26,8 @@ const throttleConfig = {
   in: {
     highWater: 1,
     maxConcurrent: 1,
-    minTime: 7000,
-    reservoirRefreshAmount: 1,
+    minTime: 3000,
+    reservoirRefreshAmount: 3,
   },
   inThrottlerError: (ctx) =>
     ctx.reply(
@@ -77,8 +77,6 @@ bot.on(message("voice"), onVoice);
 bot.on(message("photo"), onPhoto);
 
 bot.launch();
-
-openAI.createImage("dog watching cat killing man");
 
 process.once("SIGINT", () => bot.stop("SIGINT"));
 process.once("SIGTERM", () => bot.stop("SIGTERM"));
