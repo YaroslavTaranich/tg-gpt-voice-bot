@@ -3,12 +3,17 @@ import { INITIAL_SESSION, COMANDS, MODE, IMAGE_MODE } from "./const.js";
 import { code } from "telegraf/format";
 import { openAI } from "./openAI.js";
 import { ogg } from "./ogg.js";
-import { removeFile } from "./utils.js";
+import { checkIfTextMessageToBot, removeFile } from "./utils.js";
 import { jpg } from "./jpg.js";
 
 export const onText = async (ctx) => {
   ctx.session ??= INITIAL_SESSION;
   const text = ctx.message.text;
+
+  const isGroupChat = ctx.chat.id !== ctx.message.from.id;
+  const isMessageToBot = checkIfTextMessageToBot(text, ctx.botInfo.username);
+
+  if (isGroupChat && !isMessageToBot) return;
 
   if (ctx.session.pngPath) {
     try {

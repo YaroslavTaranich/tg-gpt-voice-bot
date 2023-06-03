@@ -11,3 +11,7 @@ export async function removeFile(path) {
     console.log("Error while removing file: " + error.message);
   }
 }
+
+export function checkIfTextMessageToBot(message, botUserName) {
+  return !!message.match(`@${botUserName}`);
+}
