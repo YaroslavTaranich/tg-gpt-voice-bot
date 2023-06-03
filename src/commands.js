@@ -48,6 +48,7 @@ export const imageCommands = async (ctx) => {
     ),
     imageCommandButtons
   );
+  await ctx.deleteMessage();
 };
 
 export const newSession = async (ctx) => {
@@ -58,6 +59,7 @@ export const newSession = async (ctx) => {
       "Начал новую сессию! Запиши голосовуху или отправь сообщение для общения с ГПТ!"
     )
   );
+  await ctx.deleteMessage();
 };
 
 export const voice = async (ctx) => {
@@ -66,6 +68,7 @@ export const voice = async (ctx) => {
   await ctx.reply(
     code("В этом режиме я просто буду переводить голосовухи в текст!")
   );
+  await ctx.deleteMessage();
 };
 
 export const createImage = async (ctx) => {
@@ -74,6 +77,7 @@ export const createImage = async (ctx) => {
   await ctx.reply(
     code("В этом режиме я буду создавать картинки по твоему запросу!")
   );
+  await ctx.deleteMessage();
 };
 
 export const gopnic = async (ctx) => {
@@ -84,6 +88,7 @@ export const gopnic = async (ctx) => {
     content: "Отвечай как типичный гопник",
   });
   await ctx.reply(code("Теперь я буду отвечать как чат ГОПОТА!"));
+  await ctx.deleteMessage();
 };
 
 export const snob = async (ctx) => {
@@ -94,6 +99,7 @@ export const snob = async (ctx) => {
     content: "Отвечай как самый настоящий сноб",
   });
   await ctx.reply(code("Теперь я буду отвечать как сноб!"));
+  await ctx.deleteMessage();
 };
 
 export const professor = async (ctx) => {
@@ -104,16 +110,19 @@ export const professor = async (ctx) => {
     content: "Отвечай как очень старый и очень умный профессор математики",
   });
   await ctx.reply(code("Теперь я буду отвечать как профессор!"));
+  await ctx.deleteMessage();
 };
 
 export const variation = async (ctx) => {
   ctx.session = INITIAL_SESSION;
   ctx.session.image_mode = IMAGE_MODE.VARIATON;
   await ctx.reply(code("Теперь я буду присылать вариации изображения!"));
+  await ctx.deleteMessage();
 };
 
 export const editImageByPrompt = async (ctx) => {
   ctx.session = INITIAL_SESSION;
   ctx.session.image_mode = IMAGE_MODE.EDIT_BY_PROMPT;
   await ctx.reply(code("Теперь я буду изменять изображение по описанию!"));
+  await ctx.deleteMessage();
 };
